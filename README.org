@@ -23,6 +23,7 @@ public void RemoveObjectById(Int32 Id)
 ..
 } 
 #+END_SRC 
+ More examples can also be found here: http://cascadeofinsights.com/post/1410736927/introducing-attribute-based-caching  
 
 * 4. How does it work
 Using postsharp to make method interceptions when a cached version exists
