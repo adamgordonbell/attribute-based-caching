@@ -29,39 +29,39 @@ Using postsharp to make method interceptions when a cached version exists
 
 * 5. More / Press / Blogs
 
-** http://paulstack.co.uk/blog/post/Attribute-Based-Caching-with-PostSharp.aspx
+ - http://paulstack.co.uk/blog/post/Attribute-Based-Caching-with-PostSharp.aspx
 
-** http://cascadeofinsights.com/post/1410736927/introducing-attribute-based-caching 
+ - http://cascadeofinsights.com/post/1410736927/introducing-attribute-based-caching 
 
-** http://www.infoq.com/news/2011/04/Attribute-Caching
+ - http://www.infoq.com/news/2011/04/Attribute-Caching
 
-** http://www.postsharp.net/blog/post/Attribute-Based-Caching-and-Unit-Testing-of-Aspects
+ - http://www.postsharp.net/blog/post/Attribute-Based-Caching-and-Unit-Testing-of-Aspects
 
-** http://stackoverflow.com/questions/5328819/caching-attribute-for-method 
+ - http://stackoverflow.com/questions/5328819/caching-attribute-for-method 
 
 * 6. Previous Releases (on codeplex) 
 
 ** 1.00
 
-*** Original Codeplex Release
+  - Original Codeplex Release
 ** 1.2
 
-*** faster key generation strategy - thanks payman
+  - faster key generation strategy - thanks payman
 
-*** basic unit tests - thanks payman
+  - basic unit tests - thanks payman
 
-*** btree disk cache
+  - btree disk cache
 
-*** removed unity dependency
+  - removed unity dependency
 
-*** simple timetolive setting
+  - simple timetolive setting
 ** 1.2.1
 
-*** adding ignoreTTL
+  - adding ignoreTTL
 
-*** adding support for colection to KeyBuilder
+  - adding support for colection to KeyBuilder
 
-*** adding deconstructor to btreecache - to clean up open filestream
+  - adding deconstructor to btreecache - to clean up open filestream
 
-*** add compile-time reflection cache attribute
-** GitHub version is the most recent version
+  - add compile-time reflection cache attribute
+  - *GitHub version is the most recent version*
