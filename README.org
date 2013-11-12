@@ -66,3 +66,5 @@ Using postsharp to make method interceptions when a cached version exists
 
   - add compile-time reflection cache attribute
   - *GitHub version is the most recent version*
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/c02051e192f65922caedaff5dabf967a "githalytics.com")](http://githalytics.com/agbell/attribute-based-caching)
