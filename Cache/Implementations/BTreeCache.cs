@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using BplusDotNet;
-using System.Configuration;
-using System.IO;
 
 namespace CacheAspect
 {
-    class BTreeCache : ICache
+    internal class BTreeCache : ICache
     {
         private static SerializedTree treeCache;
         private static string datafile;
@@ -19,6 +14,45 @@ namespace CacheAspect
             datafile = CacheService.DiskPath + "datafile";
             treefile = CacheService.DiskPath + "treefile";
             LoadCache();
+        }
+
+        public object this[string key]
+        {
+            get
+            {
+                if (treeCache.ContainsKey(key))
+                {
+                    return treeCache[key];
+                }
+                return null;
+            }
+            set
+            {
+                treeCache[key] = value;
+                SaveCache();
+            }
+        }
+
+
+        public bool Contains(string key)
+        {
+            return treeCache.ContainsKey(key);
+        }
+
+        public void Delete(string key)
+        {
+            treeCache.RemoveKey(key);
+            SaveCache();
+        }
+
+        public void Clear()
+        {
+            string key = treeCache.FirstKey();
+            while (!string.IsNullOrWhiteSpace(key))
+            {
+                Delete(key);
+                key = treeCache.FirstKey();
+            }
         }
 
         ~BTreeCache()
@@ -53,35 +87,6 @@ namespace CacheAspect
         public void CloseCache()
         {
             treeCache.Shutdown();
-        }
-
-        public object this[string key]
-        {
-            get
-            {
-                if (treeCache.ContainsKey(key))
-                {
-                    return treeCache[key];
-                }
-                return null;
-            }
-            set
-            {
-                treeCache[key] = value;
-                SaveCache();
-            }
-        }
-
-     
-        public bool Contains(string key)
-        {
-            return treeCache.ContainsKey(key);
-        }
-
-        public void Delete(string key)
-        {
-            treeCache.RemoveKey(key);
-            SaveCache();
         }
     }
 }
