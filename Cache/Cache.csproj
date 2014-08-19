@@ -44,6 +44,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,6 +59,7 @@
     <Compile Include="CacheService.cs" />
     <Compile Include="ICache.cs" />
     <Compile Include="Implementations\InProcessMemoryCache.cs" />
+    <Compile Include="Implementations\SystemMemoryCache.cs" />
     <Compile Include="RequiresPostSharp.cs" />
     <Compile Include="Supporting\DateWrapper.cs" />
     <Compile Include="Supporting\KeyBuilder.cs" />

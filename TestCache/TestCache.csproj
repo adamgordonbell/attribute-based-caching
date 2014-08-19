@@ -42,6 +42,7 @@
       <HintPath>..\Cache\lib\rhinomocks\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -61,14 +62,14 @@
     <Compile Include="UserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cache\Cache.csproj">
-      <Project>{3AE5F5EA-13A2-45F0-AFA0-6975BD3937BB}</Project>
-      <Name>Cache</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cache\Cache.csproj">
+      <Project>{3ae5f5ea-13a2-45f0-afa0-6975bd3937bb}</Project>
+      <Name>Cache</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <PostSharpDirectory>lib\</PostSharpDirectory>

@@ -36,7 +36,7 @@ namespace CacheAspect
 
         public void Clear()
         {
-            _cache.ClearRegion(CacheName);
+            throw new NotImplementedException("Clearing AppFabric cache has not yet been implemented.");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Linq;
 using CacheAspect;
 using CacheAspect.Attributes;
@@ -14,9 +15,8 @@ namespace TestCache
     {
         public ConfigBased()
         {
-            //
-            // TODO: Add constructor logic here
-            //
+            //TODO change this to config driven
+            CacheService.Cache = new SystemMemoryCache();
         }
 
         private TestContext testContextInstance;
@@ -62,12 +62,14 @@ namespace TestCache
         [TestMethod]
         public void TestLargeObjects()
         {
+            Assert.IsTrue(CacheService.Cache is SystemMemoryCache);
+
             byte[] b1 = GetRandomBlock(16);
             byte[] b2 = GetRandomBlock(16);
             Assert.IsTrue(b1.SequenceEqual(b2));
             CacheService.Cache.Clear();
             byte[] b3 = GetRandomBlock(16);
-            Assert.IsFalse(b1.SequenceEqual(b3));
+            Assert.IsFalse(b1.SequenceEqual(b3), "Sequence should not be the same");
         }
 
         [TestMethod]
