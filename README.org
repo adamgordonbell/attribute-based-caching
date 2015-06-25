@@ -86,4 +86,6 @@ Using postsharp to make method interceptions when a cached version exists
 
   - add compile-time reflection cache attribute
   - *GitHub version is the most recent version*
+** 1.2.2
 
+  - adding app.config based configuration
