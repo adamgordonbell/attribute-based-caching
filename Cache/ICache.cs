@@ -1,18 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace CacheAspect
+﻿namespace CacheAspect
 {
     public interface ICache
     {
+        #region Public Indexers
+
         object this[string key] { get; set; }
+
+        #endregion
+
+        #region Public Methods and Operators
 
         bool Contains(string key);
 
         void Delete(string key);
 
         void Clear();
+
+        #endregion
     }
 }

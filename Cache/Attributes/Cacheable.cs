@@ -1,66 +1,98 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.ApplicationServer.Caching;
-using PostSharp.Aspects;
-using CacheAspect.Supporting;
 using System.Reflection;
+using CacheAspect.Supporting;
+using PostSharp.Aspects;
 
 namespace CacheAspect.Attributes
 {
+
+    #region
+
+    #endregion
+
     public static partial class Cache
     {
         [Serializable]
         public class Cacheable : OnMethodBoundaryAspect
         {
-            private KeyBuilder _keyBuilder;
+            #region Fields
+
+            private readonly Lazy<KeyBuilder> _keyBuilder = new Lazy<KeyBuilder>(() => new KeyBuilder());
+
+            #endregion
+
+            #region Public Properties
+
             public KeyBuilder KeyBuilder
             {
-                get { return _keyBuilder ?? (_keyBuilder = new KeyBuilder()); }
+                get { return _keyBuilder.Value; }
             }
 
-            #region Constructors
-            
-            public Cacheable(String groupName, CacheSettings settings, String parameterProperty)
+            #endregion
+
+            #region Methods
+
+            private bool IsTooOld(DateTime time)
+            {
+                if (KeyBuilder.Settings == CacheSettings.IgnoreTTL)
+                {
+                    return false;
+                }
+                return DateTime.UtcNow - time > CacheService.TimeToLive;
+            }
+
+            #endregion
+
+            #region Constructors and Destructors
+
+            /// <summary>Parametrized cache constructor allowing to specify groups of cache and cache settings</summary>
+            /// <param name="groupName"></param>
+            /// <param name="settings"></param>
+            /// <param name="parameterProperty"></param>
+            public Cacheable(string groupName, CacheSettings settings, string parameterProperty)
             {
                 KeyBuilder.GroupName = groupName;
                 KeyBuilder.Settings = settings;
                 KeyBuilder.ParameterProperty = parameterProperty;
             }
 
-            public Cacheable(String groupName, CacheSettings settings)
-                : this(groupName, settings, string.Empty)
+            /// <summary>Parametrized cache constructor allowing to specify groups of cache and cache settings</summary>
+            /// <param name="groupName">Name of group which should contain the cached value</param>
+            /// <param name="settings">TBD</param>
+            public Cacheable(string groupName, CacheSettings settings) : this(groupName, settings, string.Empty)
             {
             }
 
-            public Cacheable(String groupName) : this(groupName, CacheSettings.Default)
+            /// <summary>Parametrized cache constructor allowing to specify groups of cache</summary>
+            /// <param name="groupName">Name of group which should contain the cached value</param>
+            public Cacheable(string groupName) : this(groupName, CacheSettings.Default)
             {
             }
 
+            /// <summary>Default cache constructor</summary>
             public Cacheable() : this(string.Empty)
             {
-
             }
+
             #endregion
 
-            //Method executed at build time.
+            #region Public Methods and Operators
+
             public override void CompileTimeInitialize(MethodBase method, AspectInfo aspectInfo)
             {
                 KeyBuilder.MethodParameters = method.GetParameters();
-                KeyBuilder.MethodName = string.Format("{0}.{1}", method.DeclaringType.FullName, method.Name);
+                KeyBuilder.MethodName = string.Format("{0}.{1}", method.DeclaringType != null ? method.DeclaringType.FullName : string.Empty, method.Name);
             }
 
             // This method is executed before the execution of target methods of this aspect.
-            public override void OnEntry(MethodExecutionArgs args)
+            public override sealed void OnEntry(MethodExecutionArgs args)
             {
                 // Compute the cache key.
-                string cacheKey = KeyBuilder.BuildCacheKey(args.Instance, args.Arguments);
+                var cacheKey = KeyBuilder.BuildCacheKey(args.Instance, args.Arguments);
 
                 // Fetch the value from the cache.
-                ICache cache = CacheService.Cache;
-                DateWrapper<object> value = (DateWrapper<object>)(cache.Contains(cacheKey) ? cache[cacheKey] : null);
-
+                var cache = CacheService.Cache;
+                var value = (DateWrapper<object>) (cache.Contains(cacheKey) ? cache[cacheKey] : null);
                 if (value != null && !IsTooOld(value.Timestamp))
                 {
                     // The value was found in cache. Don't execute the method. Return immediately.
@@ -76,27 +108,13 @@ namespace CacheAspect.Attributes
             }
 
             // This method is executed upon successful completion of target methods of this aspect.
-            public override void OnSuccess(MethodExecutionArgs args)
+            public override sealed void OnSuccess(MethodExecutionArgs args)
             {
-                string cacheKey = (string)args.MethodExecutionTag;
-                CacheService.Cache[cacheKey] = new DateWrapper<Object>()
-                {
-                    Object = args.ReturnValue,
-                    Timestamp = DateTime.UtcNow
-                };
+                var cacheKey = (string) args.MethodExecutionTag;
+                CacheService.Cache[cacheKey] = new DateWrapper<object> {Object = args.ReturnValue, Timestamp = DateTime.UtcNow};
             }
 
-            private bool IsTooOld(DateTime time)
-            {
-                if (KeyBuilder.Settings == CacheSettings.IgnoreTTL)
-                {
-                    return false;
-                }
-                return DateTime.UtcNow - time > CacheService.TimeToLive;                
-            }
-
+            #endregion
         }
     }
-
 }
-

@@ -16,7 +16,7 @@ namespace TestCache
         public ConfigBased()
         {
             //TODO change this to config driven
-            CacheService.Cache = new SystemMemoryCache();
+            CacheService.Cache = new MemoryCache();
         }
 
         private TestContext testContextInstance;
@@ -62,7 +62,7 @@ namespace TestCache
         [TestMethod]
         public void TestLargeObjects()
         {
-            Assert.IsTrue(CacheService.Cache is SystemMemoryCache);
+            Assert.IsTrue(CacheService.Cache is MemoryCache);
 
             byte[] b1 = GetRandomBlock(16);
             byte[] b2 = GetRandomBlock(16);

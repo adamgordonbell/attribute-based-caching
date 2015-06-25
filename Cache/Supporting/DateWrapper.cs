@@ -1,22 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CacheAspect.Supporting
 {
+    #region
+
+    
+
+    #endregion
+
     [Serializable]
     public class DateWrapper<T>
     {
-        public T Object
-        {
-            get;
-            set;
-        }
-        public DateTime Timestamp
-        {
-            get;
-            set;
-        }
+        #region Public Properties
+
+        public T Object { get; set; }
+
+        public DateTime Timestamp { get; set; }
+
+        #endregion
     }
 }

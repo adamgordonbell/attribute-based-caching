@@ -2,15 +2,31 @@
 
 namespace CacheAspect
 {
+    #region
+
+    
+
+    #endregion
+
     public class InProcessMemoryCache : ICache
     {
+        #region Fields
+
         private readonly ConcurrentDictionary<string, object> _cache = new ConcurrentDictionary<string, object>();
+
+        #endregion
+
+        #region Public Indexers
 
         public object this[string key]
         {
             get { return _cache[key]; }
             set { _cache[key] = value; }
         }
+
+        #endregion
+
+        #region Public Methods and Operators
 
         public bool Contains(string key)
         {
@@ -19,13 +35,16 @@ namespace CacheAspect
 
         public void Delete(string key)
         {
-            object o;
-            _cache.TryRemove(key, out o);
+            object keyOut;
+            _cache.TryRemove(key, out keyOut);
+            keyOut = null;
         }
 
         public void Clear()
         {
             _cache.Clear();
         }
+
+        #endregion
     }
 }

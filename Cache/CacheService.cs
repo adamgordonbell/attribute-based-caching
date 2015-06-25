@@ -1,38 +1,30 @@
 ﻿using System;
-using System.Text;
 using System.Configuration;
+using CacheAspect.Config;
 
 namespace CacheAspect
 {
+    #region
+
+    
+
+    #endregion
+
     public static class CacheService
     {
+        #region Constructors and Destructors
+
         static CacheService()
         {
-            InitDiskPath();
-            InitTimeToLive();            
+            Configuration = ConfigurationManager.GetSection("aopCacheConfiguration") as AopCacheConfiguration ?? new AopCacheConfiguration();
+            DiskPath = Configuration.Path;
+            TimeSpan.TryParse(Configuration.TimeToLive, out TimeToLive);
             InitCache();
         }
 
-        private static void InitDiskPath()
-        {
-            DiskPath = ConfigurationManager.AppSettings["CacheAspect.DiskPath"];
-        }
+        #endregion
 
-        private static void InitTimeToLive()
-        {
-            if (TimeToLive == TimeSpan.Parse("0:0:0:0"))
-            {
-                try
-                {
-                    TimeToLive = TimeSpan.Parse(ConfigurationManager.AppSettings["CacheAspect.TimeToLive"]);
-                }
-                catch
-                {
-                    TimeToLive = TimeSpan.MaxValue;
-                }
-
-            }
-        }
+        #region Methods
 
         private static void InitCache()
         {
@@ -40,8 +32,8 @@ namespace CacheAspect
             {
                 try
                 {
-                    Cache = (ICache)Activator.CreateInstance(Type.GetType(ConfigurationManager.AppSettings["CacheAspect.CacheType"]));
-
+// ReSharper disable once AssignNullToNotNullAttribute
+                    Cache = (ICache) Activator.CreateInstance(Type.GetType(Configuration.CacheType));
                 }
                 catch
                 {
@@ -52,8 +44,18 @@ namespace CacheAspect
             }
         }
 
+        #endregion
+
+        #region Static Fields
+
         public static ICache Cache;
-        public static TimeSpan TimeToLive;
+
+        public static AopCacheConfiguration Configuration;
+
         public static string DiskPath;
+
+        public static TimeSpan TimeToLive;
+
+        #endregion
     }
 }

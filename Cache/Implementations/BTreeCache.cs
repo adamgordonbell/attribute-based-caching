@@ -3,18 +3,14 @@ using BplusDotNet;
 
 namespace CacheAspect
 {
-    internal class BTreeCache : ICache
-    {
-        private static SerializedTree treeCache;
-        private static string datafile;
-        private static string treefile;
 
-        public BTreeCache()
-        {
-            datafile = CacheService.DiskPath + "datafile";
-            treefile = CacheService.DiskPath + "treefile";
-            LoadCache();
-        }
+    #region
+
+    #endregion
+
+    public class BTreeCache : ICache
+    {
+        #region Public Indexers
 
         public object this[string key]
         {
@@ -33,6 +29,35 @@ namespace CacheAspect
             }
         }
 
+        #endregion
+
+        #region Static Fields
+
+        private static string datafile;
+
+        private static SerializedTree treeCache;
+
+        private static string treefile;
+
+        #endregion
+
+        #region Constructors and Destructors
+
+        public BTreeCache()
+        {
+            datafile = CacheService.DiskPath + "datafile";
+            treefile = CacheService.DiskPath + "treefile";
+            LoadCache();
+        }
+
+        ~BTreeCache()
+        {
+            CloseCache();
+        }
+
+        #endregion
+
+        #region Public Methods and Operators
 
         public bool Contains(string key)
         {
@@ -45,19 +70,9 @@ namespace CacheAspect
             SaveCache();
         }
 
-        public void Clear()
+        public void CloseCache()
         {
-            string key = treeCache.FirstKey();
-            while (!string.IsNullOrWhiteSpace(key))
-            {
-                Delete(key);
-                key = treeCache.FirstKey();
-            }
-        }
-
-        ~BTreeCache()
-        {
-            CloseCache();
+            treeCache.Shutdown();
         }
 
         public void LoadCache()
@@ -84,9 +99,16 @@ namespace CacheAspect
             }
         }
 
-        public void CloseCache()
+        public void Clear()
         {
-            treeCache.Shutdown();
+            var key = treeCache.FirstKey();
+            while (!string.IsNullOrWhiteSpace(key))
+            {
+                Delete(key);
+                key = treeCache.FirstKey();
+            }
         }
+
+        #endregion
     }
 }

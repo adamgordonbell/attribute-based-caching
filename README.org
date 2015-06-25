@@ -28,6 +28,26 @@ public void RemoveObjectById(Int32 Id)
 * 4. How does it work
 Using postsharp to make method interceptions when a cached version exists
 
+* 4.1 Configuration
+#+BEGIN_SRC XML
+<?xml version="1.0" encoding="utf-8"?>
+
+<configuration>
+  <configSections>
+    <section name="aopCacheConfiguration" type="CacheAspect.Config.AopCacheConfiguration, CacheAspect" />
+  </configSections>
+  <aopCacheConfiguration type="CacheAspect.MemoryCache" path="" ttl="7:0:0:0" />
+  <system.runtime.caching>
+    <memoryCache>
+      <namedCaches>
+        <clear />
+        <add name="PostSharp.Cache" cacheMemoryLimitMegabytes="256" pollingInterval="00:05:00" />
+      </namedCaches>
+    </memoryCache>
+  </system.runtime.caching>
+</configuration>
+#+END_SRC
+
 * 5. More / Press / Blogs
 
  - http://paulstack.co.uk/blog/post/Attribute-Based-Caching-with-PostSharp.aspx

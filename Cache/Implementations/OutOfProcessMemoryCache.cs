@@ -1,12 +1,16 @@
-﻿using System;
-using Microsoft.ApplicationServer.Caching;
+﻿using Microsoft.ApplicationServer.Caching;
 
 namespace CacheAspect
 {
+    #region
+
+    
+
+    #endregion
+
     public class OutOfProcessMemoryCache : ICache
     {
-        public static String CacheName = "CacheAttribute";
-        private static DataCache _cache;
+        #region Constructors and Destructors
 
         public OutOfProcessMemoryCache()
         {
@@ -15,19 +19,33 @@ namespace CacheAspect
             _cache = factory.GetCache(CacheName);
         }
 
+        #endregion
+
+        #region Public Indexers
+
         public object this[string key]
         {
             get { return _cache[key]; }
             set { _cache[key] = value; }
         }
 
+        #endregion
+
+        #region Static Fields
+
+        public static string CacheName = "CacheAttribute";
+
+        private static DataCache _cache;
+
+        #endregion
+
+        #region Public Methods and Operators
 
         public bool Contains(string key)
         {
             //App Fabric Cache has no Contains method
             return _cache[key] != null;
         }
-
 
         public void Delete(string key)
         {
@@ -36,7 +54,12 @@ namespace CacheAspect
 
         public void Clear()
         {
-            throw new NotImplementedException("Clearing AppFabric cache has not yet been implemented.");
+            foreach (var region in _cache.GetSystemRegions())
+            {
+                _cache.ClearRegion(region);
+            }
         }
+
+        #endregion
     }
 }
