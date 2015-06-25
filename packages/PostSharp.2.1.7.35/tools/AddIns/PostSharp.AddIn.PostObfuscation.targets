@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="PostObfuscationRemap">
+
+  <Import Project="..\PostSharp.tasks"/>
+
+  
+  <Target Name="PostObfuscationRemap" Inputs="@(ObfuscatedAssembly)" Outputs="$(OutputPath)\%(ObfuscatedAssembly.Filename)%(ObfuscatedAssembly.Extension)">
+
+    <CreateProperty Value="@(MapFile->'%(FullPath)', ',')">
+      <Output TaskParameter="Value" PropertyName="_MapFilesAsCommaSeparatedList" />
+    </CreateProperty>
+
+    <CreateProperty Value="@(CommonSearchPath->'%(FullPath)', ',')">
+      <Output TaskParameter="Value" PropertyName="_CommonSearchPathAsCommaSeparatedList" />
+    </CreateProperty>
+
+    <CreateProperty Value="@(ObfuscatedSearchPath->'%(FullPath)', ',')">
+      <Output TaskParameter="Value" PropertyName="_ObfuscatedSearchPathAsCommaSeparatedList" />
+    </CreateProperty>
+
+    <CreateProperty Value="@(UnobfuscatedSearchPath->'%(FullPath)', ',')">
+      <Output TaskParameter="Value" PropertyName="_UnobfuscatedSearchPathAsCommaSeparatedList" />
+    </CreateProperty>
+
+    <PostSharp21GetDirectory>
+      <Output TaskParameter="Directory"  PropertyName="_PostSharpDirectory"/>
+    </PostSharp21GetDirectory>
+
+
+    <CreateProperty Value="
+                    $(PostSharpProperties);
+                    MapFiles=$(_MapFilesAsCommaSeparatedList);
+                    UnobfuscatedSearchPath=$(_UnobfuscatedSearchPathAsCommaSeparatedList),$(_CommonSearchPathAsCommaSeparatedList);
+                    SearchPath=$(_ObfuscatedSearchPathAsCommaSeparatedList),$(_CommonSearchPathAsCommaSeparatedList);
+                    Obfuscator=$(Obfuscator);
+                    ObfuscatorType=$(ObfuscatorType);
+                    AssemblyLocatorProbeGlobalCache=True;
+                    AssemblyLocatorEvaluateSystemPolicies=True;
+                    ">
+      <Output TaskParameter="Value" PropertyName="PostSharpProperties"/>      
+    </CreateProperty>
+
+    <Message Text="Processing %(ObfuscatedAssembly.FullPath)" Importance="High" />
+
+    <PostSharp21	Project="$(_PostSharpDirectory)\AddIns\$(PostSharpBuild)\PostSharp.AddIn.PostObfuscation.dll;Remap"
+            Input="%(ObfuscatedAssembly.FullPath)"
+            Properties="$(PostSharpProperties);Output=$(OutputPath)\%(ObfuscatedAssembly.Filename)%(ObfuscatedAssembly.Extension)"
+            AttachDebugger="$(PostSharpAttachDebugger)"
+            TraceCategories="$(PostSharpTrace)"
+            DisableReflection="True"
+            Host="$(PostSharpHost)"
+            TargetPlatform="$(PostSharpTargetPlatform)"
+            NoLogo="true"
+            ExpectedMessages="$(PostSharpExpectedMessages)"
+            IgnoreError="$(PostSharpIgnoreError)"
+            FailOnUnexpectedMessage="$(PostSharpFailOnUnexpectedMessage)"
+            License="$(PostSharpLicense)"
+          >
+      <Output TaskParameter="ExitCode" PropertyName="PostSharpExitCode"/>
+    </PostSharp21>
+  </Target>
+
+  <Target Name="Clean">
+    <Delete Files="$(OutputPath)\%(ObfuscatedAssembly.Filename)%(ObfuscatedAssembly.Extension)"/>
+  </Target>
+</Project>
